@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Timestamp Microservice</title>
 </head>
 <body>
   <h1>Timestamp Microservice</h1>
-  <p>Try visiting the endpoints with your browser to see the results.</p>
-  <p>For example: <code>/api/2015-12-25</code> or <code>/api/1451001600000</code></p>
+  <p>API endpoint: <code>/api/:date?</code></p>
+  <p>
+    - If no date is provided, the API will return the current date in both Unix and UTC formats.<br>
+    - If the input is a valid date or Unix timestamp, the API will return the corresponding date.<br>
+    - If the input is invalid, the API will return an error.
+  </p>
 </body>
 </html>
