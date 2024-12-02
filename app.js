@@ -1,37 +1,51 @@
-const express = require('express');
-const path = require('path');
+// index.js
+// where your node app starts
+
+const express = require("express");
+const cors = require("cors");
 const app = express();
 
-app.use(express.static(path.join(__dirname, 'views')));
+// Enable CORS
+app.use(cors({ optionsSuccessStatus: 200 }));
 
-app.get('/api/:date?', (req, res) => {
-  let { date } = req.params;
+// Serve static files
+app.use(express.static("public"));
 
-  // Handle empty date parameter (current date/time)
-  if (!date) {
+// Serve the index.html file
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/views/index.html");
+});
+
+// API endpoint for timestamp
+app.get("/api/:date?", (req, res) => {
+  const dateParam = req.params.date;
+
+  // If no date is provided, use the current date
+  let date;
+  if (!dateParam) {
     date = new Date();
-  } else if (!isNaN(date)) {
-    // If the date is a Unix timestamp, parse it
-    date = new Date(parseInt(date));
   } else {
-    // Otherwise, parse it as an ISO date string
-    date = new Date(date);
+    // Check if the parameter is a UNIX timestamp
+    if (!isNaN(dateParam)) {
+      date = new Date(parseInt(dateParam));
+    } else {
+      date = new Date(dateParam);
+    }
   }
 
-  // Check for invalid date
-  if (date.toString() === 'Invalid Date') {
-    return res.json({ error: 'Invalid Date' });
+  // Check if the date is valid
+  if (isNaN(date.getTime())) {
+    return res.json({ error: "Invalid Date" });
   }
 
-  // Return the response in the expected format
+  // Return the response in the required format
   res.json({
     unix: date.getTime(),
     utc: date.toUTCString(),
   });
 });
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// Listen on port set in the environment or default to 3000
+const listener = app.listen(process.env.PORT || 3000, () => {
+  console.log("Your app is listening on port " + listener.address().port);
 });
