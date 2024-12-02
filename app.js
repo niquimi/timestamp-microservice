@@ -1,37 +1,33 @@
 const express = require('express');
-const path = require('path');
 const app = express();
-
-// Serve static files (if any)
-app.use(express.static(path.join(__dirname, 'views')));
 
 app.get('/api/:date?', (req, res) => {
   let { date } = req.params;
 
-  // Handle empty date parameter
+  // Handle empty date parameter (current date/time)
   if (!date) {
     date = new Date();
   } else if (!isNaN(date)) {
-    // If date is a Unix timestamp
+    // If the date is a Unix timestamp, parse it
     date = new Date(parseInt(date));
   } else {
-    // Parse as a standard date string
+    // Otherwise, parse it as an ISO date string
     date = new Date(date);
   }
 
-  // Handle invalid dates
+  // Check for invalid date
   if (date.toString() === 'Invalid Date') {
     return res.json({ error: 'Invalid Date' });
   }
 
-  // Return valid JSON response
+  // Return the response in the expected format
   res.json({
     unix: date.getTime(),
     utc: date.toUTCString(),
   });
 });
 
-// Set up the server
+// Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
